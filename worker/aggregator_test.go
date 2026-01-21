@@ -7,6 +7,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/FrogoAI/testutils"
 	"github.com/stretchr/testify/require"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -32,7 +33,10 @@ func TestWaiter(t *testing.T) {
 				return nil
 			},
 		)
-		go agg.Flusher()
+		go func() {
+			err := agg.Flusher()
+			testutils.Equal(t, err, nil)
+		}()
 
 		// 2. Action: Add 23 items.
 		// This will trigger two flushes of 10 items each.

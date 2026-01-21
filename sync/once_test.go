@@ -53,7 +53,6 @@ func TestOncePanic(t *testing.T) {
 
 		err := once.Do(func() error {
 			panic("failed")
-			return nil
 		})
 		if err != nil {
 			t.Errorf("once.Do() failed: %v", err)
