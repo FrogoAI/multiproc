@@ -73,7 +73,11 @@ func TestWaiter(t *testing.T) {
 				return nil
 			},
 		)
-		go agg.Flusher()
+
+		go func() {
+			err := agg.Flusher()
+			testutils.Equal(t, err, nil)
+		}()
 
 		// 2. Action: Add the same 23 items.
 		for i := 0; i < totalItemsToAdd; i++ {
