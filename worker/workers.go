@@ -2,7 +2,9 @@ package worker
 
 import (
 	"context"
+	"errors"
 	"log/slog"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -60,12 +62,16 @@ func (w *Worker) Handle() error {
 type WorkersPool[K any] struct {
 	ctx    context.Context
 	cancel func()
-	chErr  chan error
+
+	wg   sync.WaitGroup
+	mu   sync.Mutex
+	errs []error
 
 	queue uint64
 	done  uint64
 
 	workers *utils.SafeMap[string, *Worker]
+	once    sync.Once
 }
 
 func NewWorkersPool[K any](
@@ -77,7 +83,6 @@ func NewWorkersPool[K any](
 		ctx:     ctx,
 		cancel:  cancel,
 		workers: utils.NewSafeMap[string, *Worker](nil),
-		chErr:   make(chan error),
 	}
 }
 
@@ -85,17 +90,26 @@ func (w *WorkersPool[K]) Execute(fn func(ctx context.Context) error) {
 	worker := NewWorker(w.ctx, fn)
 	w.workers.Set(worker.ID(), worker)
 
+	w.wg.Add(1)
+
 	atomic.AddUint64(&w.queue, 1)
 
 	go func() {
 		defer atomic.AddUint64(&w.done, 1)
+		defer w.wg.Done()
 
 		if err := worker.Handle(); err != nil {
+			w.accumulateErr(err)
 			w.Stop()
-
-			w.chErr <- err
 		}
 	}()
+}
+
+func (w *WorkersPool[K]) accumulateErr(err error) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+
+	w.errs = append(w.errs, err)
 }
 
 func (w *WorkersPool[K]) Size() uint64 {
@@ -106,13 +120,14 @@ func (w *WorkersPool[K]) Size() uint64 {
 }
 
 func (w *WorkersPool[K]) Stop() {
-	workers := w.workers.GetMap()
-	for _, worker := range workers {
-		w.Remove(worker.ID())
-		worker.Cancel()
-	}
+	w.once.Do(func() {
+		for _, worker := range w.workers.GetMap() {
+			w.Remove(worker.ID())
+			worker.Cancel()
+		}
 
-	w.cancel()
+		w.cancel()
+	})
 }
 
 func (w *WorkersPool[K]) Get(id string) (*Worker, bool) {
@@ -124,36 +139,12 @@ func (w *WorkersPool[K]) Remove(id string) {
 }
 
 func (w *WorkersPool[K]) Wait() error {
-	tk := time.NewTicker(time.Second)
-	defer tk.Stop()
+	w.wg.Wait()
+	defer w.cancel()
 
-	for {
-		select {
-		case <-w.ctx.Done():
-			return nil
-		case err, ok := <-w.chErr:
-			if !ok {
-				return nil
-			}
-
-			if err != nil {
-				return err
-			}
-		case <-tk.C:
-			stopped := true
-
-			for _, w := range w.workers.GetMap() {
-				s := w.IsStopped()
-				if !s {
-					stopped = false
-				}
-			}
-
-			if stopped {
-				return nil
-			}
-		}
-	}
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	return errors.Join(w.errs...)
 }
 
 func (w *WorkersPool[K]) TemporalWorker(
