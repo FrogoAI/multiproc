@@ -56,7 +56,7 @@ func (p *Pool) getErr() error {
 	return errors.Join(p.errs...)
 }
 
-// Execute function in gorutine
+// Execute function in goroutine
 func (p *Pool) Execute(fn ExecuteFunc) {
 	p.wg.Add(1)
 
