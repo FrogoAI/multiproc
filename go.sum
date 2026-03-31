@@ -1,5 +1,5 @@
-github.com/FrogoAI/memory v0.0.0-20260120144652-0019f10179f5 h1:Z6yPV6B0nodEqB1kAUqWiHFMS+Efc8gSs6FHazUrRTM=
-github.com/FrogoAI/memory v0.0.0-20260120144652-0019f10179f5/go.mod h1:Ioyw8AmNI3jcAlWbb0fuivM36QWkIZClAuqick2c+sw=
+github.com/FrogoAI/memory v1.0.0 h1:ireLFlGsZU1OEIKvZqFH7FY5Pjm+PGfmKcVDZMX9568=
+github.com/FrogoAI/memory v1.0.0/go.mod h1:mfufH8UNiBJ2Kt21jrPVPxszsNA7sa5I+QS8GunlDo0=
 github.com/FrogoAI/testutils v0.0.0-20260120141156-9cd2d6874ef4 h1:dZXKhQWWdx7VN9R5jOKptXj9cgimeYT4wVhaNNBDi/A=
 github.com/FrogoAI/testutils v0.0.0-20260120141156-9cd2d6874ef4/go.mod h1:CTSciZSJpcuDcJh8RM9Pfp+Imb4GSHLEdkcXg/x+bZQ=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
@@ -12,8 +12,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/sirbu/golang-common v0.0.0-20170403140351-21d4febd4bca h1:BabsdO2Orj0h9Bbj/3FfZ9uDjxP7VINvJ6CVo31a6EA=
-github.com/sirbu/golang-common v0.0.0-20170403140351-21d4febd4bca/go.mod h1:3tONEydJ3mr9ZwyB0zag0KBkKrwbg3WmYfSsbNwuNtc=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
 github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
 github.com/twmb/murmur3 v1.1.8 h1:8Yt9taO/WN3l08xErzjeschgZU2QSrwm1kclYq+0aRg=
